@@ -1,35 +1,33 @@
-# Compiler and flags
+# Compiler settings
 CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
 
-# Directories
-SRC_DIR = src/code
-HEADER_DIR = src/headers
-OBJ_DIR = objects
+# Directory paths
+SRCDIR = code
+HEADERDIR = headers
+OBJDIR = objects
 
-# Find all source files and generate object file names
-SRCS = $(wildcard $(SRC_DIR)/*.cpp)
-OBJS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRCS))
+# Find all source and header files
+SOURCES = $(wildcard $(SRCDIR)/*.cpp)
+HEADERS = $(wildcard $(HEADERDIR)/*.h)
+OBJECTS = $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 
-# Final executable name
+# Main target
 TARGET = server.out
 
-# Make sure the objects directory exists
-$(shell mkdir -p $(OBJ_DIR))
+# Create object directory if it doesn't exist
+$(shell mkdir -p $(OBJDIR))
 
-# Default target
-all: $(TARGET)
+# Main target rule
+$(TARGET): $(OBJECTS)
+	$(CXX) $(OBJECTS) -o $(TARGET)
 
-# Link object files to create executable
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $(TARGET)
+# Rule for object files
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
+	$(CXX) $(CXXFLAGS) -I$(HEADERDIR) -c $< -o $@
 
-# Compile source files into object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -I$(HEADER_DIR) -c $< -o $@
-
-# Clean target
+# Clean rule
 clean:
-	rm -f $(OBJ_DIR)/*.o $(TARGET)
+	rm -f $(OBJDIR)/*.o $(TARGET)
 
-.PHONY: all clean
+.PHONY: clean
