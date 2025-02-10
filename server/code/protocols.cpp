@@ -32,21 +32,12 @@ void handleClient(int clientSocket) {
 
 void handleLogin(std::string command) {
 
-    //test data until we have a database implemented
-    UserMap users = {
-        {"darkblade", {"darkblade", "12345"}},
-    };
-
     //splitting the command, username, and password into separate strings
     std::istringstream iss(command);
     std::string login_cmd, username, password;
     iss >> login_cmd >> username >> password;
 
-    //check if the user exists
-    if (users.find(username) == users.end()) {
-        std::cout << "User not found" << std::endl;
-        return;
-    }
+    
 
     //check if the password is correct
     if (users[username].password == password) {
